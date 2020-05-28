@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="theme-color" content="#000000">
+    <title>React App</title>
+  </head>
+  <body>
+    <noscript>
+      You need to enable JavaScript to run this app.
+    </noscript>
+    <script>
+      if (typeof process === 'undefined') {
+        window.process = {};
+      }
+    </script>
+    <script src="%PUBLIC_URL%/libs/systemjs/system.js"></script>
+    <!-- <script src="https://jspm.io/system@0.19.js"></script> -->
+    <script>
+      SystemJS.config({
+        map: {
+          // 'react': '%REACT_APP_MFE_PORTAL_URL%/libs/react/16.12.0/react.min.js',
+          // 'react-dom': '%REACT_APP_MFE_PORTAL_URL%/libs/react-dom/16.12.0/react-dom.min.js',
+          // 'react-router-dom': '%REACT_APP_MFE_PORTAL_URL%/libs/react-router-dom/5.1.2/react-router-dom.min.js',
+          // 'mobx': '%REACT_APP_MFE_PORTAL_URL%/libs/mobx/5.15.4/mobx.min.js',
+          // 'mobx-react': '%REACT_APP_MFE_PORTAL_URL%/libs/mobx-react/6.1.5/mobx-react.min.js',
+          // 'mobx-react-lite': '%REACT_APP_MFE_PORTAL_URL%/libs/mobx-react-lite/1.5.1/mobx-react-lite.min.js',
+          // 'single-spa': '%REACT_APP_MFE_PORTAL_URL%/libs/single-spa/4.4.3/single-spa.min.js',
+          // 'lodash': '%REACT_APP_MFE_PORTAL_URL%/libs/lodash/4.17.15/lodash.min.js',
+          // 'moment': '%REACT_APP_MFE_PORTAL_URL%/libs/moment/2.24.0/moment-with-locales.min.js',
+          'axios': '%REACT_APP_MFE_PORTAL_URL%/libs/axios/0.19.2/axios.min.js',
+          // 'antd': '%REACT_APP_MFE_PORTAL_URL%/libs/antd/3.26.12/antd-with-locales.min.js'
+        }
+      });
+    </script>
+    <script>
+      var _LOADED_SCRIPTS_MAP = {};
+      var head = document.querySelector('head');
+      var body = document.querySelector('body');
+      function loadCss(urls) {
+        for (var i = 0, len = urls.length; i < len; i++) {
+          var link = document.createElement('link');
+          link.rel= "stylesheet";
+          link.href = urls[i];
+          head.appendChild(link);
+        }
+      }
+      function loadJs(urls, callback) {
+        urls = typeof urls === 'string' ? [urls] : urls;
+        var scripts = [];
+        for (var i = 0, len = urls.length; i < len; i++) {
+          if (!_LOADED_SCRIPTS_MAP[urls[i]]) {
+            _LOADED_SCRIPTS_MAP[urls[i]] = true;
+            scripts.push(urls[i]);
+          }
+        }
+        var index = 0;
+        var total = scripts.length;
+        return new Promise(function(resolve, reject) {
+          for (var j = 0; j < total; j++) {
+            var script = document.createElement('script');
+            script.onload = script.onreadystatechange = function() {
+              var rs = this.readyState;
+              if ('undefined' === typeof rs || 'loaded' === rs || 'complete' === rs) {
+                index++;
+                this.onload = script.onreadystatechange = null;
+                if (index === total) {
+                  callback && callback();
+                  resolve();
+                }
+              }
+            }
+            script.src = scripts[j];
+            body.appendChild(script);
+          }
+        });
+      }
+      var MFE_PORTAL_URL = '%REACT_APP_MFE_PORTAL_URL%';
+      var MFE_COMMON_URL = '%REACT_APP_MFE_COMMON_URL%';
+      SystemJS.import('axios').then(function(res) {
+        return res.default;
+      }).then(function(axios) {
+        return axios.get(MFE_COMMON_URL + '/asset-manifest.json');
+      }).then(function(res) {
+        console.log(res)
+        var entryFiles = res.data;
+        var main = MFE_COMMON_URL+entryFiles['main.js'];
+        var cssFiles = entryFiles.css || [];
+        var jsFiles = [MFE_COMMON_URL+entryFiles['runtime~main.js'],MFE_COMMON_URL+(entryFiles['static/js/0.chunk.js'] || entryFiles['static/js/1.chunk.js'])];
+        console.log('main',main)
+        console.log('main',jsFiles)
+
+        // var entryFiles = res.data.entryFiles;
+        // var main = entryFiles.main;
+        // var cssFiles = entryFiles.css;
+        // var jsFiles = entryFiles.js;
+        if (/^\.\//.test(main)) {
+          main = MFE_PORTAL_URL + main.substr(1);
+        }
+        console.log('main',main)
+        console.log('main',jsFiles)
+        SystemJS.config({ map: { '@common': main } });
+        loadCss(cssFiles);
+        return loadJs(jsFiles);
+      }).then(function() {
+        var hwp = '<%= JSON.stringify(htmlWebpackPlugin) %>'.replace(/\\/g, '/');
+        var hwp = JSON.parse(hwp);
+        const files = hwp.files;
+        var jsFiles = files.js;
+        var _jsFiles = []
+        var main = null;
+        for (var i = 0, len = jsFiles.length; i < len; i++) {
+          if (/\/static\/js\/main\..*\.js$/.test(jsFiles[i])) {
+            main = jsFiles[i];
+          }
+          else if (!/hot-update\.js$/.test(jsFiles[i])) {
+            _jsFiles.push(jsFiles[i]);
+          }
+        }
+        console.log(main)
+        console.log(_jsFiles)
+        loadJs(_jsFiles).then(function() {
+          SystemJS.import(main);
+        });
+      });
+    </script>
+    <div id="root"></div>
+  </body>
+</html>
