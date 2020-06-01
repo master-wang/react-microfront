@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-// import { constants } from '@common';
 import logo from './logo.svg';
 import Test from './Test';
 import './App.css';
@@ -22,7 +21,6 @@ class App extends Component {
   }
 
   render() {
-    // console.log(constants)
     return (
       <div className="App">
         <header className="App-header">
@@ -30,14 +28,6 @@ class App extends Component {
           <p>
             Edit <code>src/App.js</code> and save to reload.l
           </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn Reactsdad------
-          </a>
           <Test />
         </header>
       </div>

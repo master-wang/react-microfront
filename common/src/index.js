@@ -1,12 +1,8 @@
-import { test } from './constants';
 
-console.log(test);
-
-console.log(123);
-
-export const a = 1;
+import constants from './constants';
+import component from './component';
 
 export default{
-  test,
-  a
+  constants,
+  component
 };

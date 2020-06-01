@@ -1,9 +1,7 @@
-const test = 'common'
+const a = 1;
+const test = "common-test";
 
-const a = 2;
-
-
-export {
-  test,
-  a
+export default {
+  a,
+  test
 }
