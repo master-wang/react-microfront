@@ -1,11 +1,12 @@
+/* eslint-disable no-undef */
 /* eslint-disable no-loop-func */
 import React from 'react';
 import ReactDOM from 'react-dom';
 import * as singleSpa from 'single-spa';
 import axios from 'axios';
-import SystemJS from 'systemjs';
+// import SystemJS from 'systemjs';
 import _ from 'lodash';
-import common from '@common';
+// import common from '@common';
 import './index.css';
 import App from './App';
 
@@ -20,48 +21,6 @@ const projects = [
     prefix: ['^#/project1']
   }
 ];
-
-var _LOADED_SCRIPTS_MAP = {};
-var head = document.querySelector('head');
-      var body = document.querySelector('body');
-      function loadCss(urls) {
-        for (var i = 0, len = urls.length; i < len; i++) {
-          var link = document.createElement('link');
-          link.rel= "stylesheet";
-          link.href = urls[i];
-          head.appendChild(link);
-        }
-      }
-      function loadJs(urls, callback) {
-        urls = typeof urls === 'string' ? [urls] : urls;
-        var scripts = [];
-        for (var i = 0, len = urls.length; i < len; i++) {
-          if (!_LOADED_SCRIPTS_MAP[urls[i]]) {
-            _LOADED_SCRIPTS_MAP[urls[i]] = true;
-            scripts.push(urls[i]);
-          }
-        }
-        var index = 0;
-        var total = scripts.length;
-        return new Promise(function(resolve, reject) {
-          for (var j = 0; j < total; j++) {
-            var script = document.createElement('script');
-            script.onload = script.onreadystatechange = function() {
-              var rs = this.readyState;
-              if ('undefined' === typeof rs || 'loaded' === rs || 'complete' === rs) {
-                index++;
-                this.onload = script.onreadystatechange = null;
-                if (index === total) {
-                  callback && callback();
-                  resolve();
-                }
-              }
-            }
-            script.src = scripts[j];
-            body.appendChild(script);
-          }
-        });
-      }
 
 projects.forEach(({
   name,
@@ -82,7 +41,6 @@ projects.forEach(({
       await loadJs(jsFiles);
       return SystemJS.import(main);
     },
-    // () => import('./app1/app1'),
     (location) => {
       if (!prefix) {
         return true;

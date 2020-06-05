@@ -6,13 +6,11 @@ import About from './about';
 
 const Test = () => {
   console.log(common)
-  const { constants, component:{ Root } } = common;
+  const { constants } = common;
 
   return (
   <div>
     这是common里面的公共变量：a: {constants.a}, test: {constants.test}
-    <h1>这是common的组件</h1>
-    <Root />
     <div>
     <Router>
       <div>
@@ -25,7 +23,6 @@ const Test = () => {
 
     </Router>
     </div>
-    <div id="project"></div>
   </div>
   );
 }
