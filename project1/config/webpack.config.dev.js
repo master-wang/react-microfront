@@ -416,6 +416,11 @@ module.exports = {
   ].filter(Boolean),
 
   // Some libraries import Node modules but don't use them in the browser.
+  externals: {
+    'single-spa': 'single-spa',
+    'lodash': 'lodash',
+    '@common': '@common'
+  },
   // Tell Webpack to provide empty mocks for them so importing them works.
   node: {
     dgram: 'empty',
